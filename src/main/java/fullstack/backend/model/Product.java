@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-    // Getters and Setters
     @Id
     @Column(name = "product_id")
     private String productId;
