@@ -42,14 +42,8 @@ public class ArtistController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<EntityModel<Artist>> createArtist(@RequestBody @Valid Artist artist) {
-        try {
-            Artist createdArtist = artistService.createArtist(artist);
-            return new ResponseEntity<>(assembler.toModel(createdArtist), HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Artist createdArtist = artistService.createArtist(artist);
+        return new ResponseEntity<>(assembler.toModel(createdArtist), HttpStatus.CREATED);
     }
 
     // R
@@ -61,16 +55,11 @@ public class ArtistController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<CollectionModel<EntityModel<Artist>>> getAllArtists() {
-        try {
-            List<Artist> artists = artistService.getAllArtists();
-            if (artists.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(artists), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Artist> artists = artistService.getAllArtists();
+        if (artists.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(artists), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -82,16 +71,11 @@ public class ArtistController {
     })
     @Parameter(description = "El ID del artista", example = "1")
     public ResponseEntity<EntityModel<Artist>> getArtistById(@PathVariable Long id) {
-        try {
-            Optional<Artist> artistOptional = artistService.getArtistById(id);
-            if (artistOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(artistOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Artist> artistOptional = artistService.getArtistById(id);
+        if (artistOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(artistOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/name/{name}")
@@ -103,16 +87,11 @@ public class ArtistController {
     })
     @Parameter(description = "El nombre del artista", example = "The Beatles")
     public ResponseEntity<EntityModel<Artist>> getArtistByName(@PathVariable String name) {
-        try {
-            Optional<Artist> artistOptional = artistService.getArtistByName(name);
-            if (artistOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(artistOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Artist> artistOptional = artistService.getArtistByName(name);
+        if (artistOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(artistOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // U
@@ -128,17 +107,8 @@ public class ArtistController {
     })
     @Parameter(description = "El ID del artista", example = "1")
     public ResponseEntity<EntityModel<Artist>> updateArtist(@PathVariable Long id, @RequestBody @Valid Artist artist) {
-        try {
-            Artist updatedArtist = artistService.updateArtist(id, artist);
-            return new ResponseEntity<>(assembler.toModel(updatedArtist), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Artist updatedArtist = artistService.updateArtist(id, artist);
+        return new ResponseEntity<>(assembler.toModel(updatedArtist), HttpStatus.OK);
     }
 
     // D
@@ -151,17 +121,13 @@ public class ArtistController {
     })
     @Parameter(description = "El ID del artista", example = "1")
     public ResponseEntity<EntityModel<Artist>> deleteArtist(@PathVariable Long id) {
-        try {
-            Optional<Artist> artistOptional = artistService.getArtistById(id);
-            if (artistOptional.isPresent()) {
-                Artist artist = artistOptional.get();
-                artistService.deleteArtist(id);
-                return new ResponseEntity<>(assembler.toModel(artist), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Artist> artistOptional = artistService.getArtistById(id);
+        if (artistOptional.isPresent()) {
+            Artist artist = artistOptional.get();
+            artistService.deleteArtist(id);
+            return new ResponseEntity<>(assembler.toModel(artist), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

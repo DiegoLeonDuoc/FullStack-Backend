@@ -42,14 +42,8 @@ public class LabelController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<EntityModel<Label>> createLabel(@RequestBody @Valid Label label) {
-        try {
-            Label createdLabel = labelService.createLabel(label);
-            return new ResponseEntity<>(assembler.toModel(createdLabel), HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Label createdLabel = labelService.createLabel(label);
+        return new ResponseEntity<>(assembler.toModel(createdLabel), HttpStatus.CREATED);
     }
 
     // R
@@ -61,16 +55,11 @@ public class LabelController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<CollectionModel<EntityModel<Label>>> getAllLabels() {
-        try {
-            List<Label> labels = labelService.getAllLabels();
-            if (labels.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(labels), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Label> labels = labelService.getAllLabels();
+        if (labels.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(labels), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -82,16 +71,11 @@ public class LabelController {
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
     public ResponseEntity<EntityModel<Label>> getLabelById(@PathVariable Long id) {
-        try {
-            Optional<Label> labelOptional = labelService.getLabelById(id);
-            if (labelOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Label> labelOptional = labelService.getLabelById(id);
+        if (labelOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/name/{name}")
@@ -103,16 +87,11 @@ public class LabelController {
     })
     @Parameter(description = "El nombre del sello discográfico", example = "Beat Bazaar Records")
     public ResponseEntity<EntityModel<Label>> getLabelByName(@PathVariable String name) {
-        try {
-            Optional<Label> labelOptional = labelService.getLabelByName(name);
-            if (labelOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Label> labelOptional = labelService.getLabelByName(name);
+        if (labelOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // U
@@ -128,17 +107,8 @@ public class LabelController {
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
     public ResponseEntity<EntityModel<Label>> updateLabel(@PathVariable Long id, @RequestBody @Valid Label label) {
-        try {
-            Label updatedLabel = labelService.updateLabel(id, label);
-            return new ResponseEntity<>(assembler.toModel(updatedLabel), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Label updatedLabel = labelService.updateLabel(id, label);
+        return new ResponseEntity<>(assembler.toModel(updatedLabel), HttpStatus.OK);
     }
 
     // D
@@ -151,17 +121,13 @@ public class LabelController {
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
     public ResponseEntity<EntityModel<Label>> deleteLabel(@PathVariable Long id) {
-        try {
-            Optional<Label> labelOptional = labelService.getLabelById(id);
-            if (labelOptional.isPresent()) {
-                Label label = labelOptional.get();
-                labelService.deleteLabel(id);
-                return new ResponseEntity<>(assembler.toModel(label), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Label> labelOptional = labelService.getLabelById(id);
+        if (labelOptional.isPresent()) {
+            Label label = labelOptional.get();
+            labelService.deleteLabel(id);
+            return new ResponseEntity<>(assembler.toModel(label), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
