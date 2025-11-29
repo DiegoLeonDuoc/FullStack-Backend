@@ -1,9 +1,12 @@
 package fullstack.backend.service;
 
+import fullstack.backend.exception.DomainValidationException;
+import fullstack.backend.exception.ResourceNotFoundException;
 import fullstack.backend.model.Label;
 import fullstack.backend.repository.LabelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,40 +29,40 @@ public class LabelService {
     }
 
     public Label createLabel(Label label) {
-        // Validate unique constraint
+        validateLabel(label);
         if (labelRepository.existsByLabelName(label.getLabelName())) {
-            throw new RuntimeException("Label already exists: " + label.getLabelName());
+            throw new DomainValidationException("Label already exists: " + label.getLabelName());
         }
         return labelRepository.save(label);
     }
 
     public Label updateLabel(Long id, Label labelDetails) {
-        Optional<Label> label = labelRepository.findById(id);
-        if (label.isPresent()) {
-            Label existingLabel = label.get();
+        validateLabel(labelDetails);
+        Label existingLabel = labelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label not found with id: " + id));
 
-            // Check name uniqueness if changed
-            if (!existingLabel.getLabelName().equals(labelDetails.getLabelName()) &&
-                    labelRepository.existsByLabelName(labelDetails.getLabelName())) {
-                throw new RuntimeException("Label already exists: " + labelDetails.getLabelName());
-            }
-
-            existingLabel.setLabelName(labelDetails.getLabelName());
-            return labelRepository.save(existingLabel);
+        if (!existingLabel.getLabelName().equals(labelDetails.getLabelName()) &&
+                labelRepository.existsByLabelName(labelDetails.getLabelName())) {
+            throw new DomainValidationException("Label already exists: " + labelDetails.getLabelName());
         }
-        throw new RuntimeException("Label not found with id: " + id);
+
+        existingLabel.setLabelName(labelDetails.getLabelName());
+        return labelRepository.save(existingLabel);
     }
 
     public void deleteLabel(Long id) {
-        Optional<Label> label = labelRepository.findById(id);
-        if (label.isPresent()) {
-            labelRepository.delete(label.get());
-        } else {
-            throw new RuntimeException("Label not found with id: " + id);
-        }
+        Label label = labelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label not found with id: " + id));
+        labelRepository.delete(label);
     }
 
     public boolean labelExists(Long id) {
         return labelRepository.existsById(id);
+    }
+
+    private void validateLabel(Label label) {
+        if (label == null || !StringUtils.hasText(label.getLabelName())) {
+            throw new DomainValidationException("Label name is required");
+        }
     }
 }

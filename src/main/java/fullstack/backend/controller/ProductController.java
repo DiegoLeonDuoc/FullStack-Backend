@@ -42,14 +42,8 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<EntityModel<Product>> createProduct(@RequestBody @Valid Product product) {
-        try {
-            Product createdProduct = productService.createProduct(product);
-            return new ResponseEntity<>(assembler.toModel(createdProduct), HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Product createdProduct = productService.createProduct(product);
+        return new ResponseEntity<>(assembler.toModel(createdProduct), HttpStatus.CREATED);
     }
 
     // R
@@ -61,16 +55,11 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<CollectionModel<EntityModel<Product>>> getAllProducts() {
-        try {
-            List<Product> products = productService.getAllProducts();
-            if (products.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
     }
 
     @GetMapping("/available")
@@ -81,16 +70,11 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<CollectionModel<EntityModel<Product>>> getAvailableProducts() {
-        try {
-            List<Product> products = productService.getAvailableProducts();
-            if (products.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Product> products = productService.getAvailableProducts();
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -102,16 +86,11 @@ public class ProductController {
     })
     @Parameter(description = "El ID del producto", example = "abbey-road-vinilo")
     public ResponseEntity<EntityModel<Product>> getProductById(@PathVariable String id) {
-        try {
-            Optional<Product> productOptional = productService.getProductById(id);
-            if (productOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(productOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Product> productOptional = productService.getProductById(id);
+        if (productOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(productOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // U
@@ -127,17 +106,8 @@ public class ProductController {
     })
     @Parameter(description = "El ID del producto", example = "abbey-road-vinilo")
     public ResponseEntity<EntityModel<Product>> updateProduct(@PathVariable String id, @RequestBody @Valid Product product) {
-        try {
-            Product updatedProduct = productService.updateProduct(id, product);
-            return new ResponseEntity<>(assembler.toModel(updatedProduct), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Product updatedProduct = productService.updateProduct(id, product);
+        return new ResponseEntity<>(assembler.toModel(updatedProduct), HttpStatus.OK);
     }
 
     // D
@@ -150,17 +120,13 @@ public class ProductController {
     })
     @Parameter(description = "El ID del producto", example = "abbey-road-vinilo")
     public ResponseEntity<EntityModel<Product>> deleteProduct(@PathVariable String id) {
-        try {
-            Optional<Product> productOptional = productService.getProductById(id);
-            if (productOptional.isPresent()) {
-                Product product = productOptional.get();
-                productService.deleteProduct(id);
-                return new ResponseEntity<>(assembler.toModel(product), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Product> productOptional = productService.getProductById(id);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            productService.deleteProduct(id);
+            return new ResponseEntity<>(assembler.toModel(product), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -173,16 +139,11 @@ public class ProductController {
     })
     @Parameter(description = "El ID del artista", example = "1")
     public ResponseEntity<CollectionModel<EntityModel<Product>>> getProductsByArtist(@PathVariable Long artistId) {
-        try {
-            List<Product> products = productService.getProductsByArtist(artistId);
-            if (products.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Product> products = productService.getProductsByArtist(artistId);
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
     }
 
     @GetMapping("/format/{formatType}")
@@ -194,15 +155,10 @@ public class ProductController {
     })
     @Parameter(description = "El tipo de formato", example = "VINYL")
     public ResponseEntity<CollectionModel<EntityModel<Product>>> getProductsByFormat(@PathVariable String formatType) {
-        try {
-            List<Product> products = productService.getProductsByFormat(formatType);
-            if (products.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<Product> products = productService.getProductsByFormat(formatType);
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(products), HttpStatus.OK);
     }
 }

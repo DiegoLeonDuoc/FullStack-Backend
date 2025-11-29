@@ -42,14 +42,8 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<EntityModel<User>> createUser(@RequestBody @Valid User user) {
-        try {
-            User createdUser = userService.createUser(user);
-            return new ResponseEntity<>(assembler.toModel(createdUser), HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        User createdUser = userService.createUser(user);
+        return new ResponseEntity<>(assembler.toModel(createdUser), HttpStatus.CREATED);
     }
 
     // R
@@ -61,16 +55,11 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<CollectionModel<EntityModel<User>>> getAllUsers() {
-        try {
-            List<User> users = userService.getAllUsers();
-            if (users.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(users), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        List<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(assembler.toCollectionModel(users), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -82,16 +71,11 @@ public class UserController {
     })
     @Parameter(description = "El ID del usuario", example = "1")
     public ResponseEntity<EntityModel<User>> getUserById(@PathVariable Long id) {
-        try {
-            Optional<User> userOptional = userService.getUserById(id);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<User> userOptional = userService.getUserById(id);
+        if (userOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/email/{email}")
@@ -103,16 +87,11 @@ public class UserController {
     })
     @Parameter(description = "El email del usuario", example = "usuario@example.com")
     public ResponseEntity<EntityModel<User>> getUserByEmail(@PathVariable String email) {
-        try {
-            Optional<User> userOptional = userService.getUserByEmail(email);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<User> userOptional = userService.getUserByEmail(email);
+        if (userOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/rut/{rut}")
@@ -124,16 +103,11 @@ public class UserController {
     })
     @Parameter(description = "El RUT del usuario", example = "12.345.678-5")
     public ResponseEntity<EntityModel<User>> getUserByRut(@PathVariable String rut) {
-        try {
-            Optional<User> userOptional = userService.getUserByRut(rut);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<User> userOptional = userService.getUserByRut(rut);
+        if (userOptional.isPresent()) {
+            return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // U
@@ -149,17 +123,8 @@ public class UserController {
     })
     @Parameter(description = "El ID del usuario", example = "1")
     public ResponseEntity<EntityModel<User>> updateUser(@PathVariable Long id, @RequestBody @Valid User user) {
-        try {
-            User updatedUser = userService.updateUser(id, user);
-            return new ResponseEntity<>(assembler.toModel(updatedUser), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        User updatedUser = userService.updateUser(id, user);
+        return new ResponseEntity<>(assembler.toModel(updatedUser), HttpStatus.OK);
     }
 
     // D
@@ -172,17 +137,13 @@ public class UserController {
     })
     @Parameter(description = "El ID del usuario", example = "1")
     public ResponseEntity<EntityModel<User>> deleteUser(@PathVariable Long id) {
-        try {
-            Optional<User> userOptional = userService.getUserById(id);
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                userService.deleteUser(id);
-                return new ResponseEntity<>(assembler.toModel(user), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<User> userOptional = userService.getUserById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            userService.deleteUser(id);
+            return new ResponseEntity<>(assembler.toModel(user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

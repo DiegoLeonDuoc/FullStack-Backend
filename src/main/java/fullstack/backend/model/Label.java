@@ -1,6 +1,7 @@
 package fullstack.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class Label {
     private Long labelId;
 
     @Column(name = "label_name", unique = true, nullable = false)
+    @NotBlank
     private String labelName;
 
     @Column(name = "created_at")

@@ -1,6 +1,7 @@
 package fullstack.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Artist {
     private Long artistId;
 
     @Column(name = "artist_name", unique = true, nullable = false)
+    @NotBlank
     private String artistName;
 
     @Column(name = "created_at")
