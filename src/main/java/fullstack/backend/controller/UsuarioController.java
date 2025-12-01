@@ -36,9 +36,7 @@ public class UsuarioController {
     @PostMapping
     @Operation(summary = "Agregar Usuario", description = "Permite registrar un usuario en el sistema")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuario creado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))),
+            @ApiResponse(responseCode = "201", description = "Usuario creado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class))),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o datos duplicados"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
@@ -54,7 +52,7 @@ public class UsuarioController {
     }
 
     // R
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @Operation(summary = "Obtener usuarios", description = "Obtiene la lista de usuarios registrados")
     @ApiResponses(value = {
@@ -117,21 +115,18 @@ public class UsuarioController {
         }
     }
 
-
-
     // U
     @PutMapping("/{rut}")
     @Operation(summary = "Actualizar usuario", description = "Permite actualizar los datos de un usuario según su RUT")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario modificado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))),
+            @ApiResponse(responseCode = "200", description = "Usuario modificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Usuario.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o datos duplicados"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del usuario", example = "1")
-    public ResponseEntity<EntityModel<Usuario>> actualizarUsuario(@PathVariable Integer rut, @RequestBody @Valid Usuario usuario) {
+    public ResponseEntity<EntityModel<Usuario>> actualizarUsuario(@PathVariable Integer rut,
+            @RequestBody @Valid Usuario usuario) {
         try {
             Usuario usuarioActualizado = usuarioService.actualizarUsuario(rut, usuario);
             return new ResponseEntity<>(assembler.toModel(usuarioActualizado), HttpStatus.OK);

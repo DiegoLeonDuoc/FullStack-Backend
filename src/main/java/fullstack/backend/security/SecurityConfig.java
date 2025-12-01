@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/doc/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/usuarios/**").permitAll()
+                        .requestMatchers("/api/v1/productos/**").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
