@@ -7,7 +7,7 @@ import fullstack.backend.model.ItemCarrito;
 import java.util.Optional;
 
 public interface ItemCarritoRepository extends JpaRepository<ItemCarrito, Integer> {
-    Optional<ItemCarrito> findByIdCarrito(Integer carritoId);
+    Optional<ItemCarrito> findByCarritoId(Integer carritoId);
 
-    void deleteByIdCarrito(Integer carritoId);
+    void deleteByCarritoId(Integer carritoId);
 }

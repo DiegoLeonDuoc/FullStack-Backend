@@ -35,9 +35,7 @@ public class CarritoController {
     @PostMapping("/{rutUsuario}")
     @Operation(summary = "Agregar Carrito", description = "Permite registrar un carrito en el sistema")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Carrito creado",
-                    content = @Content(mediaType = "application/json",
-                            schema =@Schema(implementation = Carrito.class))),
+            @ApiResponse(responseCode = "201", description = "Carrito creado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Carrito.class))),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o carrito duplicado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
@@ -52,47 +50,60 @@ public class CarritoController {
         }
     }
 
-//    // R
-//    @GetMapping
-//    @Operation(summary = "Obtener carritos", description = "Obtiene la lista de carritos registrados")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Retorna lista completa de carritos"),
-//            @ApiResponse(responseCode = "404", description = "No se encuentran carritos", content = @Content),
-//            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-//    })
-//    public ResponseEntity<CollectionModel<EntityModel<Carrito>>> obtenerCarritos() {
-//        try {
-//            List<Carrito> carritos = carritoService.getAllCarritos();
-//            if (carritos.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            } else {
-//                return new ResponseEntity<>(assembler.toCollectionModel(carritos), HttpStatus.OK);
-//            }
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    // // R
+    // @GetMapping
+    // @Operation(summary = "Obtener carritos", description = "Obtiene la lista de
+    // carritos registrados")
+    // @ApiResponses(value = {
+    // @ApiResponse(responseCode = "200", description = "Retorna lista completa de
+    // carritos"),
+    // @ApiResponse(responseCode = "404", description = "No se encuentran carritos",
+    // content = @Content),
+    // @ApiResponse(responseCode = "500", description = "Error interno del
+    // servidor")
+    // })
+    // public ResponseEntity<CollectionModel<EntityModel<Carrito>>>
+    // obtenerCarritos() {
+    // try {
+    // // List<Carrito> carritos = carritoService.getAllCarritos();
+    // // if (carritos.isEmpty()) {
+    // // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    // // } else {
+    // // return new ResponseEntity<>(assembler.toCollectionModel(carritos),
+    // HttpStatus.OK);
+    // // }
+    // return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    // } catch (Exception e) {
+    // return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // }
 
-//    @GetMapping("/{id}")
-//    @Operation(summary = "Buscar carrito por ID", description = "Obtiene un carrito según el ID registrado en el sistema")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Retorna Carrito"),
-//            @ApiResponse(responseCode = "404", description = "Carrito no encontrado", content = @Content),
-//            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-//    })
-//    @Parameter(description = "El ID del carrito", example = "abbey-road-vinilo")
-//    public ResponseEntity<EntityModel<Carrito>> getCarritoById(@PathVariable Integer id) {
-//        try {
-//            Optional<Carrito> carritoOptional = carritoService.getCarritoById(id);
-//            if (carritoOptional.isPresent()) {
-//                return new ResponseEntity<>(assembler.toModel(carritoOptional.get()), HttpStatus.OK);
-//            } else {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    // @GetMapping("/{id}")
+    // @Operation(summary = "Buscar carrito por ID", description = "Obtiene un
+    // carrito según el ID registrado en el sistema")
+    // @ApiResponses(value = {
+    // @ApiResponse(responseCode = "200", description = "Retorna Carrito"),
+    // @ApiResponse(responseCode = "404", description = "Carrito no encontrado",
+    // content = @Content),
+    // @ApiResponse(responseCode = "500", description = "Error interno del
+    // servidor")
+    // })
+    // @Parameter(description = "El ID del carrito", example = "abbey-road-vinilo")
+    // public ResponseEntity<EntityModel<Carrito>> getCarritoById(@PathVariable
+    // Integer id) {
+    // try {
+    // // Optional<Carrito> carritoOptional = carritoService.getCarritoById(id);
+    // // if (carritoOptional.isPresent()) {
+    // // return new ResponseEntity<>(assembler.toModel(carritoOptional.get()),
+    // HttpStatus.OK);
+    // // } else {
+    // // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    // // }
+    // return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    // } catch (Exception e) {
+    // return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // }
 
     @GetMapping("/{rut}")
     @Operation(summary = "Buscar carrito por RUT", description = "Obtiene un carrito según el RUT de un usuario registrado en el sistema")
@@ -120,18 +131,19 @@ public class CarritoController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar carrito", description = "Permite actualizar los datos de un carrito según su ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Carrito modificado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Carrito.class))),
+            @ApiResponse(responseCode = "200", description = "Carrito modificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Carrito.class))),
             @ApiResponse(responseCode = "404", description = "Carrito no encontrado"),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del carrito", example = "1")
-    public ResponseEntity<EntityModel<Carrito>> updateCarrito(@PathVariable String id, @RequestBody @Valid Carrito carrito) {
+    public ResponseEntity<EntityModel<Carrito>> updateCarrito(@PathVariable String id,
+            @RequestBody @Valid Carrito carrito) {
         try {
-            Carrito updatedCarrito = carritoService.updateCarrito(id, carrito);
-            return new ResponseEntity<>(assembler.toModel(updatedCarrito), HttpStatus.OK);
+            // Carrito updatedCarrito = carritoService.updateCarrito(id, carrito);
+            // return new ResponseEntity<>(assembler.toModel(updatedCarrito),
+            // HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -153,14 +165,15 @@ public class CarritoController {
     @Parameter(description = "El ID del carrito", example = "1")
     public ResponseEntity<EntityModel<Carrito>> deleteCarrito(@PathVariable String id) {
         try {
-            Optional<Carrito> carritoOptional = carritoService.getCarritoById(id);
-            if (carritoOptional.isPresent()) {
-                Carrito carrito = carritoOptional.get();
-                carritoService.deleteCarrito(id);
-                return new ResponseEntity<>(assembler.toModel(carrito), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            // Optional<Carrito> carritoOptional = carritoService.getCarritoById(id);
+            // if (carritoOptional.isPresent()) {
+            // Carrito carrito = carritoOptional.get();
+            // carritoService.deleteCarrito(id);
+            // return new ResponseEntity<>(assembler.toModel(carrito), HttpStatus.OK);
+            // } else {
+            // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // }
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -176,12 +189,14 @@ public class CarritoController {
     @Parameter(description = "El ID del artista", example = "1")
     public ResponseEntity<CollectionModel<EntityModel<Carrito>>> getCarritosByArtist(@PathVariable Long artistId) {
         try {
-            List<Carrito> carritos = carritoService.getCarritosByArtist(artistId);
-            if (carritos.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(carritos), HttpStatus.OK);
-            }
+            // List<Carrito> carritos = carritoService.getCarritosByArtist(artistId);
+            // if (carritos.isEmpty()) {
+            // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // } else {
+            // return new ResponseEntity<>(assembler.toCollectionModel(carritos),
+            // HttpStatus.OK);
+            // }
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -197,12 +212,14 @@ public class CarritoController {
     @Parameter(description = "El tipo de formato", example = "VINYL")
     public ResponseEntity<CollectionModel<EntityModel<Carrito>>> getCarritosByFormat(@PathVariable String formatType) {
         try {
-            List<Carrito> carritos = carritoService.getCarritosByFormat(formatType);
-            if (carritos.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(carritos), HttpStatus.OK);
-            }
+            // List<Carrito> carritos = carritoService.getCarritosByFormat(formatType);
+            // if (carritos.isEmpty()) {
+            // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // } else {
+            // return new ResponseEntity<>(assembler.toCollectionModel(carritos),
+            // HttpStatus.OK);
+            // }
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

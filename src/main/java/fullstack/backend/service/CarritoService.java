@@ -33,8 +33,7 @@ public class CarritoService {
                         Carrito carrito = new Carrito();
                         carrito.setUsuario(usuario.get());
                         return carritoRepository.save(carrito);
-                    }
-                );
+                    });
         }
         return null;
     }
@@ -54,18 +53,18 @@ public class CarritoService {
     }
 
     @Transactional
-    public Carrito agregarItemCarrito(Integer rutUsuario, Integer idProducto, Integer cantidad) {
+    public Carrito agregarItemCarrito(Integer rutUsuario, String sku, Integer cantidad) {
         Carrito carrito = crearUObtenerCarrito(rutUsuario);
 
         Optional<ItemCarrito> itemsExistente = carrito.getItemsCarrito().stream()
-                .filter(i -> i.getIdProducto().equals(idProducto))
+                .filter(i -> i.getSku().equals(sku))
                 .findFirst();
 
         if (itemsExistente.isPresent()) {
             itemsExistente.get().setCantidad(itemsExistente.get().getCantidad() + cantidad);
         } else {
             ItemCarrito itemCarrito = new ItemCarrito();
-            itemCarrito.setIdProducto(idProducto);
+            itemCarrito.setSku(sku);
             itemCarrito.setCantidad(cantidad);
             itemCarrito.setCarrito(carrito);
             carrito.getItemsCarrito().add(itemCarrito);
@@ -89,10 +88,10 @@ public class CarritoService {
     }
 
     @Transactional
-    public Carrito borrarItemCarrito(Integer rutUsuario, Integer idProducto) {
-        Carrito  carrito = obtenerCarritoPorRut(rutUsuario);
+    public Carrito borrarItemCarrito(Integer rutUsuario, Integer idItemCarrito) {
+        Carrito carrito = obtenerCarritoPorRut(rutUsuario);
 
-        carrito.getItemsCarrito().removeIf(i -> i.getId().equals(idProducto));
+        carrito.getItemsCarrito().removeIf(i -> i.getId().equals(idItemCarrito));
 
         return carritoRepository.save(carrito);
     }

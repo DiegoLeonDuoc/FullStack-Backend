@@ -1,8 +1,8 @@
 package fullstack.backend.controller;
 
-import fullstack.backend.assembler.LabelModelAssembler;
-import fullstack.backend.model.Label;
-import fullstack.backend.service.LabelService;
+import fullstack.backend.assembler.SelloModelAssembler;
+import fullstack.backend.model.Sello;
+import fullstack.backend.service.SelloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,35 +16,35 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/labels")
+@RequestMapping("/api/v1/sellos")
 @Tag(name = "Controlador Sello Discográfico", description = "Servicios de gestión de sellos discográficos")
-public class LabelController {
+public class SelloController {
 
     @Autowired
-    private LabelService labelService;
+    private SelloService selloService;
 
     @Autowired
-    private LabelModelAssembler assembler;
+    private SelloModelAssembler assembler;
 
     // C
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Agregar Sello Discográfico", description = "Permite registrar un sello discográfico en el sistema")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Sello discográfico creado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Label.class))),
+            @ApiResponse(responseCode = "201", description = "Sello discográfico creado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sello.class))),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o sello duplicado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<EntityModel<Label>> createLabel(@RequestBody @Valid Label label) {
+    public ResponseEntity<EntityModel<Sello>> createSello(@RequestBody @Valid Sello sello) {
         try {
-            Label createdLabel = labelService.createLabel(label);
-            return new ResponseEntity<>(assembler.toModel(createdLabel), HttpStatus.CREATED);
+            Sello createdSello = selloService.createSello(sello);
+            return new ResponseEntity<>(assembler.toModel(createdSello), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -60,13 +60,13 @@ public class LabelController {
             @ApiResponse(responseCode = "404", description = "No se encuentran sellos discográficos", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<CollectionModel<EntityModel<Label>>> getAllLabels() {
+    public ResponseEntity<CollectionModel<EntityModel<Sello>>> getAllSellos() {
         try {
-            List<Label> labels = labelService.getAllLabels();
-            if (labels.isEmpty()) {
+            List<Sello> sellos = selloService.getAllSellos();
+            if (sellos.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(labels), HttpStatus.OK);
+                return new ResponseEntity<>(assembler.toCollectionModel(sellos), HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,11 +81,11 @@ public class LabelController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
-    public ResponseEntity<EntityModel<Label>> getLabelById(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Sello>> getSelloById(@PathVariable Long id) {
         try {
-            Optional<Label> labelOptional = labelService.getLabelById(id);
-            if (labelOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
+            Optional<Sello> selloOptional = selloService.getSelloById(id);
+            if (selloOptional.isPresent()) {
+                return new ResponseEntity<>(assembler.toModel(selloOptional.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -94,7 +94,7 @@ public class LabelController {
         }
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("/nombre/{nombre}")
     @Operation(summary = "Buscar sello discográfico por nombre", description = "Obtiene un sello discográfico según el nombre registrado en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna Sello Discográfico"),
@@ -102,11 +102,11 @@ public class LabelController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El nombre del sello discográfico", example = "Beat Bazaar Records")
-    public ResponseEntity<EntityModel<Label>> getLabelByName(@PathVariable String name) {
+    public ResponseEntity<EntityModel<Sello>> getSelloByNombre(@PathVariable String nombre) {
         try {
-            Optional<Label> labelOptional = labelService.getLabelByName(name);
-            if (labelOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(labelOptional.get()), HttpStatus.OK);
+            Optional<Sello> selloOptional = selloService.getSelloByNombre(nombre);
+            if (selloOptional.isPresent()) {
+                return new ResponseEntity<>(assembler.toModel(selloOptional.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -117,20 +117,19 @@ public class LabelController {
 
     // U
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar sello discográfico", description = "Permite actualizar los datos de un sello discográfico según su ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sello discográfico modificado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Label.class))),
+            @ApiResponse(responseCode = "200", description = "Sello discográfico modificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sello.class))),
             @ApiResponse(responseCode = "404", description = "Sello discográfico no encontrado"),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o sello duplicado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
-    public ResponseEntity<EntityModel<Label>> updateLabel(@PathVariable Long id, @RequestBody @Valid Label label) {
+    public ResponseEntity<EntityModel<Sello>> updateSello(@PathVariable Long id, @RequestBody @Valid Sello sello) {
         try {
-            Label updatedLabel = labelService.updateLabel(id, label);
-            return new ResponseEntity<>(assembler.toModel(updatedLabel), HttpStatus.OK);
+            Sello updatedSello = selloService.updateSello(id, sello);
+            return new ResponseEntity<>(assembler.toModel(updatedSello), HttpStatus.OK);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -143,6 +142,7 @@ public class LabelController {
 
     // D
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar sello discográfico", description = "Elimina un sello discográfico específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna el sello discográfico eliminado"),
@@ -150,13 +150,13 @@ public class LabelController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del sello discográfico", example = "1")
-    public ResponseEntity<EntityModel<Label>> deleteLabel(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Sello>> deleteSello(@PathVariable Long id) {
         try {
-            Optional<Label> labelOptional = labelService.getLabelById(id);
-            if (labelOptional.isPresent()) {
-                Label label = labelOptional.get();
-                labelService.deleteLabel(id);
-                return new ResponseEntity<>(assembler.toModel(label), HttpStatus.OK);
+            Optional<Sello> selloOptional = selloService.getSelloById(id);
+            if (selloOptional.isPresent()) {
+                Sello sello = selloOptional.get();
+                selloService.deleteSello(id);
+                return new ResponseEntity<>(assembler.toModel(sello), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

@@ -27,8 +27,8 @@ public class ItemCarrito {
     @JoinColumn(name = "id_carrito", nullable = false)
     private Carrito carrito;
 
-    @Column(name = "id_producto", nullable = false)
-    private Integer idProducto;
+    @Column(name = "sku", nullable = false)
+    private String sku;
 
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;

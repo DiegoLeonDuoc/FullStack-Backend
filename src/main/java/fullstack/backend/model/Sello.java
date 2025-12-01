@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "labels")
+@Table(name = "sellos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Label {
+public class Sello {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long labelId;
+    private Long id;
 
-    @Column(name = "label_name", unique = true, nullable = false)
-    private String labelName;
+    @Column(name = "nombre_sello", unique = true, nullable = false)
+    private String nombreSello;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "creado_en")
+    private LocalDateTime creadoEn;
 }

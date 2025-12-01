@@ -14,7 +14,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    final private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();

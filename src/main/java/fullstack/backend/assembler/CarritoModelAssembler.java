@@ -15,10 +15,12 @@ public class CarritoModelAssembler implements RepresentationModelAssembler<Carri
     @Override
     public EntityModel<Carrito> toModel(Carrito carrito) {
         return EntityModel.of(carrito,
-                linkTo(methodOn(CarritoController.class).obtenerCarritoPorRut(carrito.getId())).withSelfRel(),
-                linkTo(methodOn(CarritoController.class).obtenerCarritos()).withRel("carritos"),
-                linkTo(methodOn(CarritoController.class).updateCarrito(carrito.getId(), carrito)).withRel("update"),
-                linkTo(methodOn(CarritoController.class).deleteCarrito(carrito.getId())).withRel("delete")
+                linkTo(methodOn(CarritoController.class).obtenerCarritoPorRut(carrito.getUsuario().getRut()))
+                        .withSelfRel()
+        // linkTo(methodOn(CarritoController.class).obtenerCarritos()).withRel("carritos"),
+        // linkTo(methodOn(CarritoController.class).updateCarrito(carrito.getId(),
+        // carrito)).withRel("update"),
+        // linkTo(methodOn(CarritoController.class).deleteCarrito(carrito.getId())).withRel("delete")
         );
     }
 }

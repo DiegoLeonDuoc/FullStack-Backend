@@ -16,6 +16,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ public class UsuarioController {
     }
 
     // R
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @Operation(summary = "Obtener usuarios", description = "Obtiene la lista de usuarios registrados")
     @ApiResponses(value = {
@@ -144,6 +146,7 @@ public class UsuarioController {
     }
 
     // D
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{rut}")
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario específico")
     @ApiResponses(value = {
@@ -151,7 +154,6 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @Parameter(description = "El ID del usuario", example = "1")
     public ResponseEntity<EntityModel<Usuario>> deleteUser(@PathVariable Integer rut) {
         try {
             Optional<Usuario> userOptional = usuarioService.obtenerUsuarioPorRut(rut);

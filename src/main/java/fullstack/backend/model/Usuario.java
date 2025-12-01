@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class Usuario {
     @Column(name = "rut", unique = true, nullable = false, length = 8)
     private Integer rut;
 
-    @Column(name = "dv", unique = true, nullable = false)
+    @Column(name = "dv", nullable = false)
     private char dv;
 
     @Column(name = "edad", nullable = false)
