@@ -1,8 +1,8 @@
 package fullstack.backend.controller;
 
-import fullstack.backend.assembler.UserModelAssembler;
-import fullstack.backend.model.User;
-import fullstack.backend.service.UserService;
+import fullstack.backend.assembler.UsuarioModelAssembler;
+import fullstack.backend.model.Usuario;
+import fullstack.backend.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/usuarios")
 @Tag(name = "Controlador Usuario", description = "Servicios de gestión de usuarios")
-public class UserController {
+public class UsuarioController {
 
     @Autowired
-    private UserService userService;
+    private UsuarioService usuarioService;
 
     @Autowired
-    private UserModelAssembler assembler;
+    private UsuarioModelAssembler assembler;
 
     // C
     @PostMapping
@@ -37,14 +37,14 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuario creado",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class))),
+                            schema = @Schema(implementation = Usuario.class))),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o datos duplicados"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<EntityModel<User>> createUser(@RequestBody @Valid User user) {
+    public ResponseEntity<EntityModel<Usuario>> crearUsuario(@RequestBody @Valid Usuario usuario) {
         try {
-            User createdUser = userService.createUser(user);
-            return new ResponseEntity<>(assembler.toModel(createdUser), HttpStatus.CREATED);
+            Usuario usuarioCreado = usuarioService.crearUsuario(usuario);
+            return new ResponseEntity<>(assembler.toModel(usuarioCreado), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -60,32 +60,32 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "No se encuentran usuarios", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<CollectionModel<EntityModel<User>>> getAllUsers() {
+    public ResponseEntity<CollectionModel<EntityModel<Usuario>>> obtenerUsuarios() {
         try {
-            List<User> users = userService.getAllUsers();
-            if (users.isEmpty()) {
+            List<Usuario> usuarios = usuarioService.obtenerUsuarios();
+            if (usuarios.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
-                return new ResponseEntity<>(assembler.toCollectionModel(users), HttpStatus.OK);
+                return new ResponseEntity<>(assembler.toCollectionModel(usuarios), HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Buscar usuario por ID", description = "Obtiene un usuario según el ID registrado en el sistema")
+    @GetMapping("/{rut}")
+    @Operation(summary = "Buscar usuario por RUT", description = "Obtiene un usuario según el RUT registrado en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna Usuario"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @Parameter(description = "El ID del usuario", example = "1")
-    public ResponseEntity<EntityModel<User>> getUserById(@PathVariable Long id) {
+    @Parameter(description = "El RUT del usuario sin dígito verificador", example = "12345678")
+    public ResponseEntity<EntityModel<Usuario>> obtenerUsuarioPorRut(@PathVariable Integer rut) {
         try {
-            Optional<User> userOptional = userService.getUserById(id);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
+            Optional<Usuario> usuarioOptional = usuarioService.obtenerUsuarioPorRut(rut);
+            if (usuarioOptional.isPresent()) {
+                return new ResponseEntity<>(assembler.toModel(usuarioOptional.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -102,11 +102,11 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El email del usuario", example = "usuario@example.com")
-    public ResponseEntity<EntityModel<User>> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<EntityModel<Usuario>> obtenerUsuarioPorRut(@PathVariable String email) {
         try {
-            Optional<User> userOptional = userService.getUserByEmail(email);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
+            Optional<Usuario> usuarioOptional = usuarioService.obtenerUsuarioPorEmail(email);
+            if (usuarioOptional.isPresent()) {
+                return new ResponseEntity<>(assembler.toModel(usuarioOptional.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -115,43 +115,24 @@ public class UserController {
         }
     }
 
-    @GetMapping("/rut/{rut}")
-    @Operation(summary = "Buscar usuario por RUT", description = "Obtiene un usuario según el RUT registrado en el sistema")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna Usuario"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    @Parameter(description = "El RUT del usuario", example = "12.345.678-5")
-    public ResponseEntity<EntityModel<User>> getUserByRut(@PathVariable String rut) {
-        try {
-            Optional<User> userOptional = userService.getUserByRut(rut);
-            if (userOptional.isPresent()) {
-                return new ResponseEntity<>(assembler.toModel(userOptional.get()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+
 
     // U
-    @PutMapping("/{id}")
-    @Operation(summary = "Actualizar usuario", description = "Permite actualizar los datos de un usuario según su ID")
+    @PutMapping("/{rut}")
+    @Operation(summary = "Actualizar usuario", description = "Permite actualizar los datos de un usuario según su RUT")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario modificado",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class))),
+                            schema = @Schema(implementation = Usuario.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
             @ApiResponse(responseCode = "400", description = "JSON con mal formato o datos duplicados"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del usuario", example = "1")
-    public ResponseEntity<EntityModel<User>> updateUser(@PathVariable Long id, @RequestBody @Valid User user) {
+    public ResponseEntity<EntityModel<Usuario>> actualizarUsuario(@PathVariable Integer rut, @RequestBody @Valid Usuario usuario) {
         try {
-            User updatedUser = userService.updateUser(id, user);
-            return new ResponseEntity<>(assembler.toModel(updatedUser), HttpStatus.OK);
+            Usuario usuarioActualizado = usuarioService.actualizarUsuario(rut, usuario);
+            return new ResponseEntity<>(assembler.toModel(usuarioActualizado), HttpStatus.OK);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -163,7 +144,7 @@ public class UserController {
     }
 
     // D
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{rut}")
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna el usuario eliminado"),
@@ -171,13 +152,13 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El ID del usuario", example = "1")
-    public ResponseEntity<EntityModel<User>> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Usuario>> deleteUser(@PathVariable Integer rut) {
         try {
-            Optional<User> userOptional = userService.getUserById(id);
+            Optional<Usuario> userOptional = usuarioService.obtenerUsuarioPorRut(rut);
             if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                userService.deleteUser(id);
-                return new ResponseEntity<>(assembler.toModel(user), HttpStatus.OK);
+                Usuario usuario = userOptional.get();
+                usuarioService.borrarUsuario(rut);
+                return new ResponseEntity<>(assembler.toModel(usuario), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
