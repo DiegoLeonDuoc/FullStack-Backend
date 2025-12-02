@@ -94,7 +94,7 @@ public class ArtistaController {
         }
     }
 
-    @GetMapping("/nombre/{nombre}")
+    @GetMapping("/search")
     @Operation(summary = "Buscar artista por nombre", description = "Obtiene un artista según el nombre registrado en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna Artista"),
@@ -102,7 +102,7 @@ public class ArtistaController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El nombre del artista", example = "The Beatles")
-    public ResponseEntity<EntityModel<Artista>> getArtistaByNombre(@PathVariable String nombre) {
+    public ResponseEntity<EntityModel<Artista>> getArtistaByNombre(@RequestParam String nombre) {
         try {
             Optional<Artista> artistaOptional = artistaService.getArtistaByNombre(nombre);
             if (artistaOptional.isPresent()) {

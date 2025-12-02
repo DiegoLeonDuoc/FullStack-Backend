@@ -94,7 +94,7 @@ public class SelloController {
         }
     }
 
-    @GetMapping("/nombre/{nombre}")
+    @GetMapping("/search")
     @Operation(summary = "Buscar sello discográfico por nombre", description = "Obtiene un sello discográfico según el nombre registrado en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna Sello Discográfico"),
@@ -102,7 +102,7 @@ public class SelloController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @Parameter(description = "El nombre del sello discográfico", example = "Beat Bazaar Records")
-    public ResponseEntity<EntityModel<Sello>> getSelloByNombre(@PathVariable String nombre) {
+    public ResponseEntity<EntityModel<Sello>> getSelloByNombre(@RequestParam String nombre) {
         try {
             Optional<Sello> selloOptional = selloService.getSelloByNombre(nombre);
             if (selloOptional.isPresent()) {
