@@ -224,4 +224,62 @@ public class CarritoController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/{rutUsuario}/items")
+    @Operation(summary = "Agregar item al carrito", description = "Agrega un producto al carrito del usuario")
+    public ResponseEntity<EntityModel<Carrito>> agregarItem(@PathVariable Integer rutUsuario,
+            @RequestBody ItemRequest request) {
+        try {
+            Carrito carrito = carritoService.agregarItemCarrito(rutUsuario, request.getSku(), request.getCantidad());
+            return new ResponseEntity<>(assembler.toModel(carrito), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{rutUsuario}/items/{itemId}")
+    @Operation(summary = "Actualizar cantidad de item", description = "Actualiza la cantidad de un item en el carrito")
+    public ResponseEntity<EntityModel<Carrito>> actualizarItem(@PathVariable Integer rutUsuario,
+            @PathVariable Integer itemId, @RequestBody ItemRequest request) {
+        try {
+            Carrito carrito = carritoService.actualizarCantidadItem(rutUsuario, itemId, request.getCantidad());
+            return new ResponseEntity<>(assembler.toModel(carrito), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{rutUsuario}/items/{itemId}")
+    @Operation(summary = "Eliminar item del carrito", description = "Elimina un item del carrito")
+    public ResponseEntity<EntityModel<Carrito>> eliminarItem(@PathVariable Integer rutUsuario,
+            @PathVariable Integer itemId) {
+        try {
+            Carrito carrito = carritoService.borrarItemCarrito(rutUsuario, itemId);
+            return new ResponseEntity<>(assembler.toModel(carrito), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // DTO simple para recibir datos del item
+    public static class ItemRequest {
+        private String sku;
+        private Integer cantidad;
+
+        public String getSku() {
+            return sku;
+        }
+
+        public void setSku(String sku) {
+            this.sku = sku;
+        }
+
+        public Integer getCantidad() {
+            return cantidad;
+        }
+
+        public void setCantidad(Integer cantidad) {
+            this.cantidad = cantidad;
+        }
+    }
 }

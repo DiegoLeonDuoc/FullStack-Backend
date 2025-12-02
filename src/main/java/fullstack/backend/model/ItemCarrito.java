@@ -1,5 +1,6 @@
 package fullstack.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -25,6 +26,7 @@ public class ItemCarrito {
 
     @ManyToOne
     @JoinColumn(name = "id_carrito", nullable = false)
+    @JsonBackReference
     private Carrito carrito;
 
     @Column(name = "sku", nullable = false)

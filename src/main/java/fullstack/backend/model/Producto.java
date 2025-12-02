@@ -32,6 +32,7 @@ public class Producto {
     @Column(name = "tipo_formato", nullable = false)
     private String tipoFormato;
 
+    @Lob
     @Column(name = "url_imagen", nullable = false)
     private String urlImagen;
 
@@ -41,7 +42,7 @@ public class Producto {
     private String descripcion;
 
     @Column(nullable = false)
-    private Integer precio; // Price in cents
+    private Integer precio;
 
     @Column(name = "cantidad_stock")
     private Integer cantidadStock = 0;
