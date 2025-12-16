@@ -10,4 +10,6 @@ public interface ItemCarritoRepository extends JpaRepository<ItemCarrito, Intege
     Optional<ItemCarrito> findByCarritoId(Integer carritoId);
 
     void deleteByCarritoId(Integer carritoId);
+
+    void deleteBySku(String sku);
 }

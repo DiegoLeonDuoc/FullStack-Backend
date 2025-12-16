@@ -67,9 +67,14 @@ public class ProductoService {
         throw new RuntimeException("Producto no encontrado con id: " + id);
     }
 
+    @Autowired
+    private fullstack.backend.repository.ItemCarritoRepository itemCarritoRepository;
+
+    @org.springframework.transaction.annotation.Transactional
     public void deleteProducto(String id) {
         Optional<Producto> producto = productoRepository.findById(id);
         if (producto.isPresent()) {
+            itemCarritoRepository.deleteBySku(id);
             productoRepository.delete(producto.get());
         } else {
             throw new RuntimeException("Producto no encontrado con id: " + id);
